@@ -24,6 +24,16 @@ Each channel's mute button changed its audio mute state. Active and muted RGB pa
 
 After the C++ port, another USB reconnect and manual test confirmed all four faders and mute buttons. The service reconnected without restarting.
 
+## Fader lighting
+
+The fader background and foreground use separate zones. Zone `05` is the shared background; zones `06` through `09` are the four foregrounds. Giving both the same color hides the level boundary.
+
+The driver now holds the background at zero brightness and black RGB, while the foregrounds use the selected color and brightness. A Linux `0f/84` readback confirmed zero brightness for zone `05` and 100 for each foreground at the configured 100% brightness.
+
+The operator then moved a physical fader halfway, down, and up, and confirmed that the light stopped at the fader position with the track above it dark.
+
+The Windows startup sequence also sends `0f/11` with arguments `01 zone 01 00` for each foreground. Linux `0f/91` queries returned those same stored values. Their mode semantics still need a controlled comparison.
+
 ## Driver behavior
 
 The first valid position report establishes a baseline. It does not change audio levels. Later reports update only the faders that moved, and button handling uses rising edges to avoid repeated toggles while held.

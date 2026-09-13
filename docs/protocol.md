@@ -69,14 +69,14 @@ Static color uses class `0f`, command `02`. Arguments start with `00 zone 01 00 
 | Zone | LEDs | Count | Size byte |
 | --- | --- | --- | --- |
 | `04` | Wordmark | 1 | `1b` |
-| `05` | Four fader bases | 4 | `24` |
-| `06` to `09` | Individual fader lights | 1 each | `1b` |
+| `05` | Four fader backgrounds | 4 | `24` |
+| `06` to `09` | Individual fader foregrounds | 1 each | `1b` |
 | `0a` | Channel numbers | 4 | `24` |
 | `10` | Channel mute buttons | 8 | `1b` |
 | `20` | Dedicated mic mute | 2 | `1e` |
 | `21` | Bleep button | 2 | `1e` |
 
-Zone `10` takes four active/muted RGB pairs. Zones `20` and `21` take one pair each. Other zones repeat the active color.
+Zone `10` takes four active/muted RGB pairs. Zones `20` and `21` take one pair each. The driver holds zone `05` at zero brightness with black RGB values, so it does not illuminate the unfilled track. Other zones repeat the active color at the configured brightness.
 
 Mute feedback uses class `08`, command `10`, arguments `00 channel muted`. Channel numbers run from 1 through 5; muted is `00` or `01`. The driver follows software mute state so the button lights also change after an app mute action.
 

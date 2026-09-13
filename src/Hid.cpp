@@ -94,9 +94,10 @@ void Hid::lights(const QJsonObject &config) {
     const int brightness = config.value("brightness").toInt();
     const int zones[][3] = {{4,1,0x1b},{5,4,0x24},{6,1,0x1b},{7,1,0x1b},{8,1,0x1b},{9,1,0x1b},{10,4,0x24},{16,8,0x1b},{32,2,0x1e},{33,2,0x1e}};
     for (const auto &zone : zones) {
-        QByteArray level; level.append(char(1)).append(char(zone[0])).append(char(brightness));
+        // The base is the unfilled track; the foreground follows the physical fader.
+        QByteArray level; level.append(char(1)).append(char(zone[0])).append(char(zone[0] == 5 ? 0 : brightness));
         transact(feature(15, 4, level));
-        auto colors = rgb.repeated(zone[1]);
+        auto colors = zone[0] == 5 ? QByteArray(zone[1] * 3, 0) : rgb.repeated(zone[1]);
         if (zone[0] == 16) colors = (rgb + muted).repeated(4);
         if (zone[0] == 32 || zone[0] == 33) colors = rgb + muted;
         QByteArray args; args.append(char(0)).append(char(zone[0])).append(char(1)).append(char(0)).append(char(0)).append(char(zone[1]));
