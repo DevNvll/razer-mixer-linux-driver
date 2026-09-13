@@ -1,10 +1,10 @@
 # USB protocol
 
-These notes describe commands tested on the Razer Audio Mixer, VID `1532`, PID `053e`. The [capture index](../research/README.md) identifies the supporting packets.
+These notes describe commands tested on the Razer Audio Mixer, VID `1532`, PID `053e`. The [research findings](../research/README.md) summarize the Windows captures and Linux tests.
 
 ## HID reports
 
-The tested device exposes HID on interface 6 with interrupt endpoint `0x84`. The driver discovers its hidraw node through sysfs rather than assuming a fixed device path. The [report descriptor](../research/hid-report-descriptor.hex) is included.
+The tested device exposes HID on interface 6 with interrupt endpoint `0x84`. The driver discovers its hidraw node through sysfs rather than assuming a fixed device path.
 
 Feature reports contain 64 bytes, including report ID `07`.
 

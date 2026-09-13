@@ -36,6 +36,5 @@ ScrollView {
                 }
             }
         }
-        Text { Layout.fillWidth: true; text: "Other apps appear while playing audio through the mixer. Saved assignments remain here."; color: Theme.dim; font.pixelSize: 12; wrapMode: Text.WordWrap }
     }
 }

@@ -69,10 +69,5 @@ Rectangle {
             text: checked ? "Unmute" : "Mute"
             onClicked: Mixer.setMute(root.channelIndex, checked)
         }
-        Text {
-            Layout.fillWidth: true
-            text: ["Everything you hear", "Chat channel", "Music channel", "Microphone input"][root.channelIndex]
-            color: Theme.dim; font.pixelSize: 11; horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight
-        }
     }
 }

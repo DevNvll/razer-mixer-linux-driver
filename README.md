@@ -11,6 +11,15 @@ A C++ driver and standalone QML app for the Razer Audio Mixer, USB `1532:053e`.
 
 Physical mute buttons work with configurable active and muted colors. The app shows read-only faders and lets you mute channels, assign apps, and choose lighting colors and brightness. Its accent follows the active color.
 
+![Mixer page showing the four audio channels](docs/screenshots/mixer.png)
+
+<details>
+<summary>Lighting controls</summary>
+
+![Lighting page with active and muted colors and brightness](docs/screenshots/lighting.png)
+
+</details>
+
 ## Install
 
 Requires Linux, PipeWire with PulseAudio compatibility, WirePlumber, `pactl`, `wpctl`, systemd user services, CMake 3.21+, a C++17 compiler, and Qt 6.4+ development packages for Quick, Controls, Dialogs, and Test.
@@ -22,4 +31,4 @@ razer-mixer
 
 The installer builds both executables, runs tests, and starts the driver at login. See [setup](docs/setup.md) for USB permissions and audio device selection.
 
-The repository includes [protocol notes](docs/protocol.md) and [reverse-engineering captures](research/README.md). This is an unofficial driver. Firmware updates and microphone DSP settings are outside its scope.
+The repository includes [protocol notes](docs/protocol.md) and [research findings](research/README.md). This is an unofficial driver. Firmware updates and microphone DSP settings are outside its scope.

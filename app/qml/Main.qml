@@ -17,6 +17,8 @@ ApplicationWindow {
     property int activePage: 0
     readonly property var device: Mixer.snapshot.device || ({})
     readonly property var settings: Mixer.snapshot.config || ({})
+    readonly property bool needsSettings: Mixer.snapshot.configured === false
+    readonly property bool needsDriver: !device.connected && device.service !== "active" && device.service !== "unavailable"
     Shortcut { sequence: "Ctrl+1"; onActivated: window.activePage = 0 }
     Shortcut { sequence: "Ctrl+2"; onActivated: window.activePage = 1 }
     Shortcut { sequence: "Ctrl+3"; onActivated: window.activePage = 2 }
@@ -43,7 +45,7 @@ ApplicationWindow {
             }
             Item { Layout.fillWidth: true }
             Rectangle { width: 7; height: 7; radius: 4; color: window.device.connected ? Theme.accent : Theme.dim }
-            Text { text: window.device.connected ? "Connected" : "Disconnected"; color: Theme.dim; font.pixelSize: 13 }
+            Text { text: Mixer.busy ? "Saving..." : window.device.connected ? "Connected" : "Disconnected"; color: Theme.dim; font.pixelSize: 13 }
         }
         RowLayout {
             spacing: 8
@@ -58,51 +60,43 @@ ApplicationWindow {
                 }
             }
             Item { Layout.fillWidth: true }
-            Text { text: "1532 : 053E"; color: Theme.dim; font.pixelSize: 11; font.letterSpacing: 2 }
         }
         StackLayout {
             Layout.fillWidth: true; Layout.fillHeight: true
             currentIndex: window.activePage
-            ColumnLayout {
-                spacing: 16
-                RowLayout {
-                    Layout.fillWidth: true; Layout.fillHeight: true; spacing: 12
-                    Repeater {
-                        model: 4
-                        Channel {
-                            required property int index
-                            Layout.fillWidth: true; Layout.fillHeight: true
-                            Layout.preferredWidth: 1
-                            channelIndex: index
-                            channel: (Mixer.snapshot.channels || [])[index] || ({})
-                        }
+            RowLayout {
+                spacing: 12
+                Repeater {
+                    model: 4
+                    Channel {
+                        required property int index
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                        Layout.preferredWidth: 1
+                        channelIndex: index
+                        channel: (Mixer.snapshot.channels || [])[index] || ({})
                     }
-                }
-                Text {
-                    Layout.fillWidth: true
-                    text: window.device.fadersReady ? "Faders are read-only here. Adjust volume on the mixer. Master controls the whole mix."
-                        : window.device.connected ? "Waiting for physical fader reports." : "Connect the mixer to use its audio channels."
-                    color: Theme.dim; font.pixelSize: 12; wrapMode: Text.WordWrap
                 }
             }
             Lighting { settings: window.settings }
             Routing { apps: Mixer.snapshot.apps || [] }
         }
-        Rectangle { Layout.fillWidth: true; height: 1; color: Theme.border }
+        Rectangle { visible: footer.visible; Layout.fillWidth: true; height: 1; color: Theme.border }
         RowLayout {
+            id: footer
+            visible: Mixer.error.length > 0 || window.needsSettings || window.needsDriver
             Layout.fillWidth: true; spacing: 12
             Text {
                 Layout.fillWidth: true
-                text: Mixer.error || (Mixer.busy ? "Saving changes..." : "Settings save automatically")
+                text: Mixer.error
                 textFormat: Text.PlainText; wrapMode: Text.WordWrap
                 color: Mixer.error ? Theme.danger : Theme.dim; font.pixelSize: 12
             }
             ActionButton {
-                visible: Mixer.snapshot.configured === false
+                visible: window.needsSettings
                 text: "Create settings"; onClicked: Mixer.initialize()
             }
             ActionButton {
-                visible: !window.device.connected && window.device.service !== "active" && window.device.service !== "unavailable"
+                visible: window.needsDriver
                 text: "Start driver"; onClicked: Mixer.startDriver()
             }
         }

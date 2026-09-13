@@ -60,5 +60,4 @@ ColumnLayout {
         }
     }
     Item { Layout.fillHeight: true }
-    Text { Layout.fillWidth: true; text: "Changes save automatically and return when you reconnect the mixer."; color: Theme.dim; font.pixelSize: 12; wrapMode: Text.WordWrap }
 }

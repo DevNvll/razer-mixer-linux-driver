@@ -1,52 +1,33 @@
-# Reverse-engineering data
+# Reverse-engineering notes
 
-The Windows captures record Synapse initialization. Linux data records command replay and physical control testing.
+Windows Synapse captures identified the command that enables the Razer Audio Mixer's physical faders. Linux replay and USB reconnect tests confirmed the behavior described in the [protocol notes](../docs/protocol.md).
 
-| File | Contents |
-| --- | --- |
-| `windows/startup-control.pcapng` | USB control and interrupt packets from Synapse startup |
-| `windows/comparison-control.pcapng` | A second Synapse initialization capture |
-| `windows/*-frames.csv` | Filtered packet numbers mapped to the originals |
-| `windows/provenance.json` | Original and filtered capture SHA-256 hashes |
-| `linux/initialization.json` | Exact fader query, enable, replies, and first working report |
-| `linux/fader-sweep.jsonl` | Relative times and raw reports from a USB reconnect and manual control sweep |
-| `hid-report-descriptor.hex` | Descriptor read from the Linux HID node |
+## Fader initialization
 
-The published captures retain USB control and interrupt traffic. Audio transfers and USB string descriptors are excluded. The original captures remain outside this repository.
+Before initialization, mute buttons sent reports but all four fader bytes stayed at zero. The trailing `04` byte was present in both working and uninitialized reports.
 
-## Initialization packets
+Synapse queried class `0f`, command `95`, then enabled reporting with command `15`. The query returned `00 00` before enabling and `00 01` afterward. Both requests used a zero checksum byte, so the driver preserves their exact bytes in [Protocol.cpp](../src/Protocol.cpp).
 
-Packet numbers in the first three columns refer to the published files.
-
-| Capture | Query | Enable | First fader report | Delay after Enable |
+| Observation | Query frame | Enable frame | First fader report | Delay after Enable |
 | --- | --- | --- | --- | --- |
-| Startup | 200 | 204 | 206 | 4.985 ms |
-| Comparison | 208 | 212 | 214 | 4.016 ms |
+| Windows startup | 228 | 232 | 234 | 4.985 ms |
+| Windows comparison | 236 | 240 | 242 | 4.016 ms |
+| Linux replay | n/a | n/a | `09 00 00 64 64 64 64 04` | 4.095 ms |
 
-Those packets were originally 228, 232, and 234 in the startup capture, and 236, 240, and 242 in the comparison capture. Both send the same enable request. See [protocol notes](../docs/protocol.md) for the byte layout.
+Frame numbers refer to the original Windows captures. Both sent the same enable request.
 
-The Linux sweep contains 392 control reports. All four faders reached both 0 and 100. The person operating the device confirmed that Master, Chat, Music, and Mic responded correctly and that the mute colors changed correctly.
+## Physical control checks
 
-## Reproduce the filtered capture
+A Linux USB reconnect and manual sweep produced 392 control reports. Every fader reached 0 and 100. The operator confirmed that Master controlled the whole output, Chat controlled its assigned apps, Music controlled Spotify, and Mic controlled the microphone input.
 
-Requires Wireshark's `tshark` command.
+Each channel's mute button changed its audio mute state. Active and muted RGB pairs made the button lights follow that state. The dedicated mic button controlled the same input as channel 4.
 
-```sh
-./research/tools/filter-capture.sh original.pcap filtered.pcapng
-```
+After the C++ port, another USB reconnect and manual test confirmed all four faders and mute buttons. The service reconnected without restarting.
 
-The script also writes a frame mapping CSV. Check the published files with:
+## Driver behavior
 
-```sh
-cd research
-sha256sum --check SHA256SUMS
-```
+The first valid position report establishes a baseline. It does not change audio levels. Later reports update only the faders that moved, and button handling uses rising edges to avoid repeated toggles while held.
 
-For another Linux control capture, leave the driver running so it enables fader reporting:
+Master controls the hardware output. Chat and Music use virtual outputs routed into it. This lets Master lower the full mix while the other two faders adjust their own channels.
 
-```sh
-razer-mixer-driver monitor --duration 60 > controls.jsonl
-razer-mixer-driver descriptor > descriptor.hex
-```
-
-These commands read the HID device without changing its feature state.
+The [protocol reference](../docs/protocol.md) documents report layouts, initialization bytes, lighting zones, brightness, and mute feedback. [Setup](../docs/setup.md) covers installation and diagnostics.
