@@ -1,0 +1,2 @@
+# Razer Audio Mixer HID interface.
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1532", ATTRS{idProduct}=="053e", TAG+="uaccess", GROUP="audio", MODE="0660"

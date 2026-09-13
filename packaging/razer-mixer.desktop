@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Razer Audio Mixer
+Comment=Control mixer channels and lighting
+Exec=razer-mixer
+Icon=razer-mixer
+Terminal=false
+Categories=AudioVideo;Audio;Mixer;

@@ -1,0 +1,16 @@
+[
+  {
+    "original": "razer-startup-native.pcap",
+    "original_sha256": "590214a89ca2045800e36d5b9333922bcb9c1ec15b572eafe9db3e4c0021b2df",
+    "filtered": "startup-control.pcapng",
+    "filtered_sha256": "b8134e5778e12519f22dc20d60c7656d88a4993a17d461fa3b8499d78a193d6c",
+    "retained": "USB control and interrupt transfers; USB string descriptors excluded"
+  },
+  {
+    "original": "razer-synapse-comparison.pcap",
+    "original_sha256": "b25c969161cf469c3ed06fc1c82c9c742c534092eaa8ddd800dfe297447c9246",
+    "filtered": "comparison-control.pcapng",
+    "filtered_sha256": "5153ae1ca5f7d6ff964c83da9eb018526452319851da3f76b2e90b82605b18ee",
+    "retained": "USB control and interrupt transfers; USB string descriptors excluded"
+  }
+]
