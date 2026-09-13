@@ -10,8 +10,8 @@ Rectangle {
     readonly property bool available: channel.available || false
     readonly property bool muted: channel.muted || false
     color: Theme.background; radius: Theme.cornerRadius
-    border.color: muted ? Theme.danger : "transparent"
-    Rectangle { visible: root.channelIndex > 0 && !root.muted; width: 1; height: parent.height; color: "#252525" }
+    border.width: 1
+    border.color: muted ? Theme.danger : "#303030"
     ColumnLayout {
         anchors.fill: parent; anchors.margins: 14; spacing: 8
         RowLayout {

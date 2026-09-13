@@ -72,6 +72,7 @@ ApplicationWindow {
                         Channel {
                             required property int index
                             Layout.fillWidth: true; Layout.fillHeight: true
+                            Layout.preferredWidth: 1
                             channelIndex: index
                             channel: (Mixer.snapshot.channels || [])[index] || ({})
                         }
